@@ -1,0 +1,73 @@
+// Code your design here
+// Code your design here
+`timescale 1ns/1ps
+module alu (
+    input  [7:0] A,
+    input  [7:0] B,
+    input  [3:0] opcode,
+    output reg  [7:0] result,
+    output reg        carry,
+    output            zero );
+    reg [8:0] temp;
+  always @(*) begin
+// Default values
+        result = 8'b0;
+        carry  = 1'b0;
+        temp   = 9'b0;
+        case (opcode)
+            // 0000 : Addition
+            4'b0000: begin
+                temp   = A + B;
+                result = temp[7:0];
+                carry  = temp[8];
+            end
+            // 0001 : Subtraction
+            4'b0001: begin
+                result = A - B;
+                // Carry = 1 when A >= B
+                if (A >= B)
+                    carry = 1'b1;
+                else
+                    carry = 1'b0;
+            end
+            // 0010 : Increment
+            4'b0010: begin
+                temp   = A + 1;
+                result = temp[7:0];
+                carry  = temp[8];
+            end
+            // 0011 : Decrement
+            4'b0011: begin
+                result = A - 1;
+                if (A != 0)
+                    carry = 1'b1;
+                else
+                    carry = 1'b0;
+            end
+            // 0100 : AND
+            4'b0100: begin
+                result = A & B;
+            end
+            // 0101 : OR
+            4'b0101: begin
+                result = A | B;
+            end
+            // 0110 : XOR
+            4'b0110: begin
+                result = A ^ B;
+            end
+            // 0111 : NOT
+            4'b0111: begin
+                result = ~A;
+            end
+            // Default
+            default: begin
+                result = 8'b0;
+                carry  = 1'b0;
+            end
+        endcase
+  end
+    // Zero flag
+    assign zero = (result == 8'b0);
+
+endmodule
